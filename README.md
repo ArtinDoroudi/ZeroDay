@@ -1,3 +1,12 @@
-# Welcome to your Lovable project
+# Solo Deck Quest
 
-TODO: Document your project here
+Solo hacker dice-management strategy game (ZERO.DAY), built with Vite and React.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+The dev server listens on port 8080 by default.
