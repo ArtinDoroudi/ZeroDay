@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 5%;
+    --foreground: 195 15% 90%;
+
+    --card: 220 22% 8%;
+    --card-foreground: 195 15% 90%;
+
+    --popover: 220 22% 8%;
+    --popover-foreground: 195 15% 90%;
+
+    --primary: 152 100% 44%;
+    --primary-foreground: 220 20% 5%;
+
+    --secondary: 220 30% 14%;
+    --secondary-foreground: 195 15% 90%;
+
+    --muted: 220 22% 12%;
+    --muted-foreground: 210 15% 50%;
+
+    --accent: 152 35% 16%;
+    --accent-foreground: 195 15% 90%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 195 15% 90%;
+
+    --border: 220 22% 16%;
+    --input: 220 22% 16%;
+    --ring: 152 100% 44%;
+
+    --radius: 0.5rem;
+
+    --cyber-dark: 220 30% 8%;
+    --cyber-blue: 220 80% 55%;
+    --cyber-cyan: 152 100% 48%;
+    --cyber-green: 145 60% 45%;
+    --dice-basic: 220 10% 88%;
+    --dice-fixed: 220 60% 55%;
+    --dice-wild: 152 100% 48%;
+    --card-ready: 145 60% 45%;
+    --card-exhausted: 0 0% 35%;
+
+    --sidebar-background: 220 22% 7%;
+    --sidebar-foreground: 195 15% 90%;
+    --sidebar-primary: 152 100% 44%;
+    --sidebar-primary-foreground: 220 20% 5%;
+    --sidebar-accent: 220 30% 14%;
+    --sidebar-accent-foreground: 195 15% 90%;
+    --sidebar-border: 220 22% 16%;
+    --sidebar-ring: 152 100% 44%;
+  }
+}
+
+@layer base {
+  html {
+    font-size: 22px; /* scale up from default 16px — makes all rem-based Tailwind classes ~1.4× larger */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground;
+    font-family: 'Exo 2', sans-serif;
+    background:
+      radial-gradient(ellipse at 15% 15%, hsl(152 70% 14% / 0.1) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 85%, hsl(152 25% 10% / 0.06) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 50%, hsl(145 30% 8% / 0.05) 0%, transparent 70%),
+      hsl(var(--background));
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+@layer components {
+  .dice-face {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold cursor-pointer select-none transition-all duration-200;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .dice-basic {
+    @apply border-2;
+    background: linear-gradient(135deg, hsl(220 10% 85%), hsl(220 10% 75%));
+    border-color: hsl(220 10% 65%);
+    color: hsl(220 20% 15%);
+  }
+
+  .dice-fixed {
+    @apply border-2;
+    background: linear-gradient(135deg, hsl(220 60% 48%), hsl(220 60% 38%));
+    border-color: hsl(220 60% 60%);
+    color: hsl(0 0% 95%);
+  }
+
+  .dice-wild {
+    @apply border-2;
+    background: linear-gradient(135deg, hsl(152 100% 36%), hsl(145 90% 26%));
+    border-color: hsl(152 100% 48%);
+    color: hsl(0 0% 100%);
+    box-shadow: 0 0 8px hsl(152 100% 44% / 0.45);
+  }
+
+  .dice-selected {
+    @apply ring-2 ring-offset-2 ring-offset-background scale-110;
+    ring-color: hsl(var(--primary));
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.5);
+  }
+
+  .card-ready {
+    border-color: hsl(var(--card-ready));
+    box-shadow: 0 0 8px hsl(var(--card-ready) / 0.3);
+  }
+
+  /* Operations / projects — violet so it does not read as colony “ready” (green). */
+  .card-project {
+    border-color: hsl(270 55% 58% / 0.55);
+    box-shadow: 0 0 10px hsl(270 50% 45% / 0.12);
+  }
+
+  .card-exhausted {
+    border-color: hsl(var(--card-exhausted));
+    opacity: 0.7;
+  }
+
+  .game-zone {
+    @apply rounded-xl border p-3 backdrop-blur-sm;
+    background: hsl(var(--card) / 0.85);
+    border-color: hsl(220 22% 18%);
+  }
+
+  .cyber-glow {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.12), 0 0 60px hsl(var(--primary) / 0.05);
+  }
+
+  /* Legacy alias */
+  .mars-glow {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.12), 0 0 60px hsl(var(--primary) / 0.05);
+  }
+}
+
+@keyframes dice-roll {
+  0% { transform: rotateX(0) rotateY(0) scale(0.8); opacity: 0.5; }
+  50% { transform: rotateX(180deg) rotateY(180deg) scale(1.1); opacity: 1; }
+  100% { transform: rotateX(360deg) rotateY(360deg) scale(1); opacity: 1; }
+}
+
+@keyframes card-enter {
+  0% { transform: translateY(20px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px hsl(152 100% 44% / 0.35); }
+  50% { box-shadow: 0 0 24px hsl(152 100% 44% / 0.6), 0 0 40px hsl(152 100% 44% / 0.22); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 0.3; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.animate-dice-roll {
+  animation: dice-roll 0.5s ease-out;
+}
+
+.animate-card-enter {
+  animation: card-enter 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.zero-text-gradient {
+  color: hsl(var(--primary));
+}
