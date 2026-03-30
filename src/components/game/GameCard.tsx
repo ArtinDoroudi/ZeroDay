@@ -3,6 +3,7 @@ import { CardInstance, CostType } from '@/game/types';
 import { CARD_DEFS } from '@/game/cards';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useLongPress } from '@/hooks/useLongPress';
 
 interface GameCardProps {
   card: CardInstance;
@@ -67,6 +68,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   compact,
   discardModGain = 1,
 }) => {
+  const discardLongPress = useLongPress(() => onRightClick?.());
   const def = CARD_DEFS[card.defId];
   if (!def) return null;
 
@@ -81,7 +83,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   const cardEl = (
     <div
       className={cn(
-        'rounded-lg border-2 p-2 cursor-pointer transition-all duration-200 hover:scale-105 select-none',
+        'rounded-lg border-2 p-2 cursor-pointer transition-all duration-200 hover:scale-105 select-none touch-manipulation',
         compact ? 'min-w-[100px] max-w-[130px]' : 'min-w-[115px]',
         isProject &&
           cn(
@@ -93,11 +95,24 @@ export const GameCard: React.FC<GameCardProps> = ({
         !isColony && !isProject && 'border-border bg-card hover:border-primary/50',
         isColony && !isReady && !isExhausted && def.maxUses === 0 && 'border-muted-foreground/30 bg-card/60'
       )}
-      onClick={onClick}
+      onClick={
+        onRightClick
+          ? discardLongPress.wrapClick(() => {
+              onClick?.();
+            })
+          : onClick
+      }
       onContextMenu={e => {
         e.preventDefault();
         onRightClick?.();
       }}
+      {...(onRightClick
+        ? {
+            onTouchStart: discardLongPress.onTouchStart,
+            onTouchEnd: discardLongPress.onTouchEnd,
+            onTouchCancel: discardLongPress.onTouchCancel,
+          }
+        : {})}
     >
       <div className="text-center">
         <span className="text-2xl">{def.emoji}</span>
@@ -194,7 +209,7 @@ export const GameCard: React.FC<GameCardProps> = ({
       {def.vpValue > 0 && <p className="text-xs text-cyber-cyan mt-0.5">+{def.vpValue} XP on deploy</p>}
       {isHandScript && (
         <p className="text-[11px] mt-2 pt-2 border-t border-destructive/30 text-red-400 font-medium leading-snug">
-          Right-click to discard for +{modHint} M.O.D.
+          Right-click or long-press to discard for +{modHint} M.O.D.
         </p>
       )}
     </>

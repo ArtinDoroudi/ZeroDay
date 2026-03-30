@@ -168,7 +168,7 @@ const HowToPlayModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="how-to-title"
-        className="flex max-h-[min(32rem,85vh)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-[0_24px_48px_-12px_rgba(0,0,0,0.65)]"
+        className="flex max-h-[min(32rem,100dvh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-none border border-border bg-card shadow-[0_24px_48px_-12px_rgba(0,0,0,0.65)] sm:rounded-xl sm:max-h-[min(32rem,85vh)]"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
@@ -325,13 +325,13 @@ const HowToPlayModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             {tab === 'controls' && (
               <ul className="space-y-0 divide-y divide-border/60 text-sm m-0 p-0 list-none">
                 {[
-                  ['Left-click packet', 'Toggle whether it is selected.'],
-                  ['Right-click packet', 'Select only that packet.'],
+                  ['Tap / click packet', 'Toggle whether it is selected.'],
+                  ['Right-click or long-press packet', 'Select only that packet.'],
                   ['+1 / −1 (next to a packet)', 'Spend M.O.D. to shift its value.'],
-                  ['Click a network node', 'Use its ability with the packets you have selected.'],
-                  ['Click a script', 'Deploy it; spends the shown packet cost.'],
-                  ['Right-click a script', 'Discard it for +1 M.O.D.'],
-                  ['Click an Operation', 'Execute it when your selection matches the cost.'],
+                  ['Tap a network node', 'Use its ability with the packets you have selected.'],
+                  ['Tap a script', 'Deploy it; spends the shown packet cost.'],
+                  ['Right-click or long-press a script', 'Discard it for M.O.D. (see queue bonus on board).'],
+                  ['Tap an Operation', 'Execute it when your selection matches the cost.'],
                 ].map(([label, detail]) => (
                   <li key={label} className="flex flex-col gap-0.5 py-3 first:pt-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
                     <span className="shrink-0 font-medium text-foreground">{label}</span>
@@ -373,7 +373,7 @@ const StartScreen: React.FC<{ onStart: (mode: GameMode) => void }> = ({ onStart 
   const [selectedMode, setSelectedMode] = useState<GameMode>('script_kiddie');
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center gap-7 p-6">
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center gap-6 overflow-hidden p-4 py-[max(1.5rem,env(safe-area-inset-top,0px))] sm:gap-7 sm:p-6">
       <NetworkBackground />
 
       {/* ── Title ── */}
@@ -476,27 +476,33 @@ const GameOverScreen: React.FC<{ state: GameState; onRestart: () => void }> = ({
       : 'Operations remain unexecuted...';
 
   return (
-  <div className="min-h-screen flex flex-col items-center justify-center gap-8 p-8">
-    <div className="text-center space-y-4">
+  <div className="min-h-[100dvh] flex flex-col items-center justify-center gap-6 p-4 sm:gap-8 sm:p-8">
+    <div className="text-center space-y-3 sm:space-y-4 px-1">
       {state.gameResult === 'win' ? (
         <>
-          <h1 className="text-5xl font-black text-primary" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+          <h1
+            className="text-2xl font-black leading-tight text-primary sm:text-5xl"
+            style={{ fontFamily: 'Orbitron, sans-serif' }}
+          >
             🎉 ACCESS GRANTED
           </h1>
-          <p className="text-xl text-foreground font-mono">{winSubtitle}</p>
+          <p className="text-sm text-foreground font-mono sm:text-xl">{winSubtitle}</p>
         </>
       ) : (
         <>
-          <h1 className="text-5xl font-black text-destructive" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+          <h1
+            className="text-2xl font-black leading-tight text-destructive sm:text-5xl"
+            style={{ fontFamily: 'Orbitron, sans-serif' }}
+          >
             💀 CONNECTION LOST
           </h1>
-          <p className="text-xl text-foreground font-mono">{loseSubtitle}</p>
+          <p className="text-sm text-foreground font-mono sm:text-xl">{loseSubtitle}</p>
         </>
       )}
       <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
         {state.gameMode === 'firewall_breach' ? 'Firewall Breach' : 'Script Kiddie'}
       </p>
-      <p className="text-3xl font-bold text-primary" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+      <p className="text-xl font-bold text-primary sm:text-3xl" style={{ fontFamily: 'Orbitron, sans-serif' }}>
         Score: {state.score} XP
       </p>
       {state.gameResult === 'win' && state.gameMode === 'script_kiddie' && state.score >= FIREWALL_MIN_XP && (
@@ -506,7 +512,7 @@ const GameOverScreen: React.FC<{ state: GameState; onRestart: () => void }> = ({
         <p className="text-lg text-green-400 font-mono">⭐ Firewall Breach objective complete</p>
       )}
     </div>
-    <div className="game-zone max-w-sm w-full space-y-2">
+    <div className="game-zone max-w-sm w-full space-y-2 px-1">
       <h3 className="font-semibold text-sm font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
         <span className="text-primary">{'>'}</span> Score Breakdown
       </h3>
@@ -541,14 +547,14 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
   const scriptDiscardModGain = state.colony.some(c => c.defId === 'ids_probe') ? 2 : 1;
 
   return (
-    <div className="flex h-[100dvh] max-h-[100dvh] min-h-0 flex-col overflow-hidden p-2 gap-2">
+    <div className="flex h-[100dvh] max-h-[100dvh] min-h-0 flex-col gap-2 overflow-hidden p-2 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
       {/* Top Bar */}
       <div
-        className="flex shrink-0 items-center gap-3 px-3 py-2 game-zone"
+        className="game-zone flex shrink-0 flex-col gap-2 px-2 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-3"
         style={{ borderColor: 'hsl(var(--primary) / 0.18)' }}
       >
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-1">
-          <div className="flex min-w-0 flex-col gap-0.5 shrink-0">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 sm:flex-1 sm:gap-x-4">
+          <div className="flex min-w-0 shrink-0 flex-col gap-0.5">
             <h2 className="text-sm font-bold font-mono leading-tight" style={{ fontFamily: 'Orbitron, sans-serif' }}>
               <span className="zero-text-gradient">ZERO</span><span className="text-muted-foreground/30">.</span>DAY
             </h2>
@@ -558,19 +564,19 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
                 : 'Script Kiddie'}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs font-mono shrink-0">
-            <span>🔄 Cycle {state.round}/{state.maxRounds}</span>
-            <Progress value={(state.round / state.maxRounds) * 100} className="w-20 h-2" />
+          <div className="flex min-w-0 shrink-0 items-center gap-2 text-xs font-mono">
+            <span className="whitespace-nowrap">🔄 {state.round}/{state.maxRounds}</span>
+            <Progress value={(state.round / state.maxRounds) * 100} className="h-2 w-14 sm:w-20" />
           </div>
-          <span className="text-xs font-mono text-primary font-bold shrink-0">⭐ {state.score} XP</span>
+          <span className="shrink-0 text-xs font-mono font-bold text-primary">⭐ {state.score} XP</span>
         </div>
 
-        <div className="shrink-0 flex flex-wrap items-center justify-center gap-2 px-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-center sm:px-2">
           <button
             type="button"
             onClick={() => dispatch(s => resetHand(s))}
             title="Start over like a new game: new operations, script queue, and packets (same mode)."
-            className="rounded-lg border border-border/80 bg-muted/25 px-3 py-2 text-xs font-semibold tracking-wide text-foreground/90 transition-all hover:border-primary/45 hover:bg-muted/40"
+            className="rounded-lg border border-border/80 bg-muted/25 px-2.5 py-2 text-[11px] font-semibold tracking-wide text-foreground/90 transition-all hover:border-primary/45 hover:bg-muted/40 sm:px-3 sm:text-xs"
             style={{ fontFamily: 'Orbitron, sans-serif' }}
           >
             🔁 NEW RUN
@@ -578,10 +584,11 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
           <button
             type="button"
             onClick={() => setShowHowTo(true)}
-            className="min-w-[10.5rem] rounded-lg border border-primary/40 bg-primary/8 px-5 py-2 text-xs font-semibold tracking-wide text-foreground/95 shadow-[0_0_20px_-8px_hsl(var(--primary))] transition-all hover:border-primary/65 hover:bg-primary/14 hover:shadow-[0_0_28px_-10px_hsl(var(--primary))] active:scale-[0.98]"
+            className="min-w-0 rounded-lg border border-primary/40 bg-primary/8 px-3 py-2 text-[11px] font-semibold tracking-wide text-foreground/95 shadow-[0_0_20px_-8px_hsl(var(--primary))] transition-all hover:border-primary/65 hover:bg-primary/14 hover:shadow-[0_0_28px_-10px_hsl(var(--primary))] active:scale-[0.98] sm:min-w-[10.5rem] sm:px-5 sm:text-xs"
             style={{ fontFamily: 'Orbitron, sans-serif' }}
           >
-            HOW TO PLAY
+            <span className="sm:hidden">HELP</span>
+            <span className="hidden sm:inline">HOW TO PLAY</span>
           </button>
           <button
             type="button"
@@ -602,16 +609,62 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
           </button>
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-1 text-xs font-mono">
-          <span className="text-green-400 font-bold shrink-0">🔧 {state.mod} M.O.D.</span>
-          <span className="text-muted-foreground shrink-0">📚 Queue: {state.deck.length}</span>
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono sm:flex-1 sm:justify-end sm:gap-x-4">
+          <span className="shrink-0 font-bold text-green-400">🔧 {state.mod} M.O.D.</span>
+          <span className="shrink-0 text-muted-foreground">📚 Queue: {state.deck.length}</span>
         </div>
       </div>
 
-      {/* Main Grid — row height capped so the log column cannot stretch the page */}
-      <div className="grid min-h-0 flex-1 grid-cols-[1fr_360px] grid-rows-[minmax(0,1fr)] gap-2 overflow-hidden">
-        {/* Left: Game Zones */}
-        <div className="flex min-h-0 min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain">
+      {/* Main: stack on narrow viewports (log + end cycle on top); side panel from lg */}
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden lg:flex-row lg:items-stretch">
+        {/* Sidebar: end cycle + log — first on mobile for quick access */}
+        <div className="order-1 flex max-h-[min(42vh,19rem)] min-h-0 w-full shrink-0 flex-col gap-2 overflow-hidden lg:order-2 lg:max-h-none lg:w-[360px] lg:max-w-[360px] lg:shrink-0">
+          <div className="game-zone shrink-0">
+            <button
+              className="w-full rounded-lg py-2.5 text-xs font-black tracking-widest transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 sm:py-3 sm:text-sm"
+              style={{
+                fontFamily: 'Orbitron, sans-serif',
+                background: state.phase === 'action' ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.1)',
+                color: state.phase === 'action' ? 'hsl(var(--primary-foreground))' : 'rgba(255,255,255,0.3)',
+              }}
+              onClick={() => dispatch(endTurn)}
+              disabled={state.phase !== 'action'}
+            >
+              ⏭ END CYCLE
+            </button>
+          </div>
+          <div className="game-zone flex min-h-0 flex-1 flex-col overflow-hidden">
+            <h3 className="mb-2 shrink-0 text-xs font-bold text-muted-foreground font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+              📟 SYSTEM LOG
+            </h3>
+            <div
+              ref={logRef}
+              className="min-h-0 w-full min-w-0 flex-1 overflow-y-auto overscroll-contain pr-1 text-xs leading-relaxed text-muted-foreground font-mono"
+            >
+              <div className="flex w-full min-w-0 flex-col gap-0.5 pb-1">
+                {logLines.map(({ key, text }) => {
+                  const line = text.trimStart();
+                  const isCycle = line.startsWith('━');
+                  return (
+                    <p
+                      key={key}
+                      className={cn(
+                        'w-full min-w-0 max-w-full',
+                        isCycle && 'mb-1 border-b border-border/50 pb-1.5 text-primary font-bold',
+                        !isCycle && 'break-words'
+                      )}
+                    >
+                      {line}
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Game zones — scroll */}
+        <div className="order-2 flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain lg:order-1">
           {/* Operations */}
           <div className="game-zone" style={{ borderColor: 'rgba(168,85,247,0.2)' }}>
             <h3 className="text-xs font-bold mb-2 text-purple-400/80 font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
@@ -688,7 +741,7 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
           </div>
 
           {/* Cached + Scripts row */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="game-zone">
               <h3 className="text-xs font-bold mb-2 text-green-400/70 font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
                 🔒 CACHED ({state.preservedDice.length})
@@ -714,7 +767,9 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
             <div className="game-zone">
               <h3 className="text-xs font-bold mb-2 text-muted-foreground font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
                 💾 SCRIPTS ({state.hand.length})
-                <span className="text-[9px] font-normal ml-1 text-muted-foreground/50">Right-click → discard for M.O.D.</span>
+                <span className="mt-0.5 block text-[9px] font-normal text-muted-foreground/50 sm:mt-0 sm:ml-1 sm:inline">
+                  Long-press or right-click → discard for M.O.D.
+                </span>
               </h3>
               <div className="flex gap-2 flex-wrap min-h-[65px]">
                 {state.hand.map(card => (
@@ -730,52 +785,6 @@ const GameBoard: React.FC<{ state: GameState; dispatch: (fn: (s: GameState) => G
                 {state.hand.length === 0 && (
                   <p className="text-xs text-muted-foreground italic font-mono">No scripts loaded</p>
                 )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Log + Actions */}
-        <div className="flex min-h-0 min-w-0 flex-col gap-2 overflow-hidden">
-          <div className="game-zone shrink-0">
-            <button
-              className="w-full py-3 rounded-lg font-black tracking-widest text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
-              style={{
-                fontFamily: 'Orbitron, sans-serif',
-                background: state.phase === 'action' ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.1)',
-                color: state.phase === 'action' ? 'hsl(var(--primary-foreground))' : 'rgba(255,255,255,0.3)',
-              }}
-              onClick={() => dispatch(endTurn)}
-              disabled={state.phase !== 'action'}
-            >
-              ⏭ END CYCLE
-            </button>
-          </div>
-          <div className="game-zone flex min-h-0 flex-1 flex-col overflow-hidden">
-            <h3 className="mb-2 shrink-0 text-xs font-bold text-muted-foreground font-mono" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-              📟 SYSTEM LOG
-            </h3>
-            <div
-              ref={logRef}
-              className="min-h-0 w-full min-w-0 flex-1 overflow-y-auto overscroll-contain pr-1 text-xs leading-relaxed text-muted-foreground font-mono"
-            >
-              <div className="flex w-full min-w-0 flex-col gap-0.5 pb-1">
-                {logLines.map(({ key, text }) => {
-                  const line = text.trimStart();
-                  const isCycle = line.startsWith('━');
-                  return (
-                    <p
-                      key={key}
-                      className={cn(
-                        'w-full min-w-0 max-w-full',
-                        isCycle && 'mb-1 border-b border-border/50 pb-1.5 text-primary font-bold',
-                        !isCycle && 'break-words'
-                      )}
-                    >
-                      {line}
-                    </p>
-                  );
-                })}
               </div>
             </div>
           </div>

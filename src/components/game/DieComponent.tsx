@@ -2,6 +2,7 @@ import React from 'react';
 import { Die as DieType } from '@/game/types';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useLongPress } from '@/hooks/useLongPress';
 
 interface DieProps {
   die: DieType;
@@ -24,6 +25,7 @@ const dotPositions: Record<number, string[]> = {
 export const DieComponent: React.FC<DieProps> = ({ die, selected, onSelect, onExclusiveSelect, onModify, showModButtons }) => {
   const typeClass = die.type === 'wild' ? 'dice-wild' : die.type === 'fixed' ? 'dice-fixed' : 'dice-basic';
   const typeLabel = die.type === 'wild' ? '⚡ Wildcard' : die.type === 'fixed' ? '🔒 Fixed' : '📦 Packet';
+  const longPress = useLongPress(onExclusiveSelect);
 
   return (
     <Tooltip>
@@ -44,8 +46,11 @@ export const DieComponent: React.FC<DieProps> = ({ die, selected, onSelect, onEx
               selected && 'dice-selected',
               die.preserved && 'ring-1 ring-cyber-green'
             )}
-            onClick={onSelect}
+            onClick={longPress.wrapClick(() => onSelect())}
             onContextMenu={(e) => { e.preventDefault(); onExclusiveSelect(); }}
+            onTouchStart={longPress.onTouchStart}
+            onTouchEnd={longPress.onTouchEnd}
+            onTouchCancel={longPress.onTouchCancel}
           >
             {dotPositions[die.value]?.map((pos, i) => (
               <div key={i} className={cn('absolute w-2 h-2 rounded-full', pos, die.type === 'wild' ? 'bg-white' : die.type === 'fixed' ? 'bg-blue-100' : 'bg-gray-700')} />
